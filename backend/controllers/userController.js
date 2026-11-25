@@ -11,7 +11,7 @@ const removeLocalAvatar = (avatarUrl) => {
   const filename = path.basename(avatarUrl);
   const fullPath = path.join(__dirname, '..', 'uploads', 'avatars', filename);
   if (fs.existsSync(fullPath)) {
-    fs.unlink(fullPath, () => {});
+    fs.unlink(fullPath, () => { });
   }
 };
 
@@ -52,7 +52,11 @@ const updateProfile = async (req, res, next) => {
 
     if (req.file) {
       removeLocalAvatar(user.avatar);
-      user.avatar = `/uploads/avatars/${req.file.filename}`;
+      if (req.file.buffer) {
+        user.avatar = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+      } else if (req.file.filename) {
+        user.avatar = `/uploads/avatars/${req.file.filename}`;
+      }
     } else if (req.body.removeAvatar === 'true' || req.body.removeAvatar === true) {
       removeLocalAvatar(user.avatar);
       user.avatar = '';

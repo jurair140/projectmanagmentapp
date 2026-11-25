@@ -107,16 +107,26 @@ VITE_API_URL=http://localhost:5000/api
 
 ---
 
-## Deployment
+## Deployment on Vercel (Both Backend & Frontend)
 
-### Backend (Render)
-1. Create a new Web Service pointing to `backend/`.
-2. Build command: `npm install`
-3. Start command: `npm start`
-4. Set environment variables (`MONGODB_URI`, `JWT_SECRET`, `CLIENT_URL` set to your Vercel URL, `NODE_ENV=production`).
+Deploy this repository as **two separate Vercel projects** from the same GitHub repository:
 
-### Frontend (Vercel)
-1. Import repository with Root Directory set to `frontend`.
-2. Framework preset: `Vite`.
-3. Set `VITE_API_URL` to `https://<your-render-service>.onrender.com/api`.
-4. `frontend/vercel.json` is preconfigured for client-side React Router rewrites.
+### 1. Backend Project (Vercel)
+1. Push your repository to GitHub.
+2. In Vercel, click **Add New → Project** and select your repository.
+3. Set **Root Directory** to `backend`.
+4. Leave Framework Preset as **Other** (`backend/vercel.json` routes all requests to `backend/api/index.js`).
+5. Add Environment Variables:
+   - `MONGODB_URI` = your MongoDB Atlas connection string (include database name, e.g. `/taskflow?retryWrites=true&w=majority`, and ensure MongoDB Atlas Network Access allows `0.0.0.0/0` for Vercel serverless IPs)
+   - `JWT_SECRET` = a strong random secret
+   - `NODE_ENV` = `production`
+   - `CLIENT_URL` = your frontend Vercel URL (add/update this once the frontend is deployed, e.g. `https://jurair-project-management.vercel.app`)
+6. Click **Deploy** and copy the backend URL (e.g. `https://jurair-pm-api.vercel.app`).
+
+### 2. Frontend Project (Vercel)
+1. In Vercel, click **Add New → Project** and import the **same** repository again.
+2. Set **Root Directory** to `frontend`.
+3. Framework Preset: **Vite** (`frontend/vercel.json` handles React Router rewrites).
+4. Add Environment Variable:
+   - `VITE_API_URL` = `https://<your-backend-vercel-domain>/api`
+5. Click **Deploy**, copy the frontend URL, and make sure `CLIENT_URL` in the backend Vercel project matches it exactly (no trailing slash).
