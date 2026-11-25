@@ -1,0 +1,21 @@
+const { validationResult } = require('express-validator');
+
+/**
+ * Middleware to validate express-validator results and return 400 with field errors.
+ */
+const validateRequest = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      message: errors.array()[0].msg,
+      errors: errors.array().map((err) => ({
+        field: err.path,
+        message: err.msg,
+      })),
+    });
+  }
+  next();
+};
+
+module.exports = validateRequest;
