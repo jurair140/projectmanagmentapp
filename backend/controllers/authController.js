@@ -24,11 +24,12 @@ const register = async (req, res, next) => {
       password,
     });
 
-    attachTokenCookie(res, user._id);
+    const token = attachTokenCookie(res, user._id);
 
     res.status(201).json({
       success: true,
       message: 'Account created successfully',
+      token,
       user: user.toSafeJSON(),
     });
   } catch (err) {
@@ -61,11 +62,12 @@ const login = async (req, res, next) => {
       });
     }
 
-    attachTokenCookie(res, user._id);
+    const token = attachTokenCookie(res, user._id);
 
     res.status(200).json({
       success: true,
       message: 'Logged in successfully',
+      token,
       user: user.toSafeJSON(),
     });
   } catch (err) {

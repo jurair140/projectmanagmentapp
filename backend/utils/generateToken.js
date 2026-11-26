@@ -10,8 +10,11 @@ const generateToken = (userId) => {
   return jwt.sign({ id: userId }, secret, { expiresIn: '7d' });
 };
 
+const isProductionEnv = () =>
+  process.env.NODE_ENV === 'production' || Boolean(process.env.VERCEL);
+
 const getCookieOptions = () => {
-  const isProd = process.env.NODE_ENV === 'production';
+  const isProd = isProductionEnv();
   return {
     httpOnly: true,
     secure: isProd,
@@ -28,7 +31,7 @@ const attachTokenCookie = (res, userId) => {
 };
 
 const clearTokenCookie = (res) => {
-  const isProd = process.env.NODE_ENV === 'production';
+  const isProd = isProductionEnv();
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
     secure: isProd,

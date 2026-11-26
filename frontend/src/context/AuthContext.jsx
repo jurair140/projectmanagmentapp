@@ -5,6 +5,7 @@ import {
   logoutUser,
   registerUser,
 } from '../services/authService';
+import { clearAuthToken, setAuthToken } from '../services/api';
 
 export const AuthContext = createContext(null);
 
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
       const data = await fetchCurrentUser();
       setUser(data.user || null);
     } catch {
+      clearAuthToken();
       setUser(null);
     } finally {
       setLoading(false);
@@ -29,12 +31,18 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     const data = await loginUser(credentials);
+    if (data.token) {
+      setAuthToken(data.token);
+    }
     setUser(data.user);
     return data;
   };
 
   const register = async (payload) => {
     const data = await registerUser(payload);
+    if (data.token) {
+      setAuthToken(data.token);
+    }
     setUser(data.user);
     return data;
   };
@@ -43,6 +51,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await logoutUser();
     } finally {
+      clearAuthToken();
       setUser(null);
     }
   };
